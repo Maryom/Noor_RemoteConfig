@@ -5,6 +5,7 @@ const request = require('request-promise-native');
 const rp = require('request-promise');
 const google = require('googleapis');
 
+// Add your Firebase project ID here
 const PROJECT_ID = 'xxxx-xxxxx';
 const HOST = 'https://firebaseremoteconfig.googleapis.com';
 const PATH = '/v1/projects/' + PROJECT_ID + '/remoteConfig';
@@ -12,9 +13,14 @@ const SCOPES = ['https://www.googleapis.com/auth/firebase.remoteconfig'];
 
 admin.initializeApp(functions.config().firebase);
 
+// This function will be triggered whenever you update Remote Config in Firebase console
 exports.pushConfig = functions.remoteConfig.onUpdate(versionMetadata => {
   var promises = [];
-  // Create FCM payload to send data message to PUSH_RC topic.
+  
+  /** Create FCM payload to send data message to PUSH_RC topic.
+   * This will be a silent notification from the app side.
+   * The goal is to let the apps know when to retrieve the latest RC value.
+   */
   const payload = {
     topic: "PUSH_RC",
     data: {
